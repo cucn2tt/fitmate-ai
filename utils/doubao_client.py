@@ -32,20 +32,20 @@ def analyze_food(image_bytes: bytes) -> dict:
         "只返回JSON，不要有其他文字。"
     )
 
-    response = client.responses.create(
+    response = client.chat.completions.create(
         model=config.DOUBAO_ENDPOINT_ID,
-        input=[
+        messages=[
             {
                 "role": "user",
                 "content": [
-                    {"type": "input_image", "image_url": image_url},
-                    {"type": "input_text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": image_url}},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ],
     )
 
-    raw_text = response.output_text.strip()
+    raw_text = response.choices[0].message.content.strip()
 
     # 尝试从响应中提取JSON
     if raw_text.startswith("```"):
